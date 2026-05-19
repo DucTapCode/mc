@@ -1,0 +1,14 @@
+enabled: true
+sleepMillis: 1000
+unloadChunks: true
+blacklist: []
+# Thời gian chờ (tính bằng giây) sau khi người cuối cùng out để server bắt đầu ngủ đông
+hibernate-delay: 10
+
+# Bật tính năng ép Java dọn rác và giải phóng RAM ngay khi ngủ đông
+go-garbage-collector: true
+
+# Tin nhắn thông báo ngoài Console khi server ngủ hoặc thức giấc
+messages:
+  sleep: '[Hibernator] Server da vao che do ngu dong. Dang giai phong CPU/RAM...'
+  wakeup: '[Hibernator] Co nguoi ket noi! Server dang thuc giac...'
