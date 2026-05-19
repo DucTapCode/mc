@@ -1,0 +1,113 @@
+# ─────────────────────────────────────────────────────────────────────────────────────────────────
+# DISCORDSRV ADVANCED SECURITY & AUDIT LOGS CONFIGURATION
+# Hệ thống giám sát, cảnh báo và nhật ký an ninh tự động cho Server Survival.
+# ─────────────────────────────────────────────────────────────────────────────────────────────────
+
+Alerts:
+
+  # 1. LOG THEO DÕI TRUY CẬP (ADVANCED NETWORK CONNECTION LOG)
+  # Tự động bắt gói tin kết nối để ghi nhận IP, Ping, TPS và vị trí khi có người vào server.
+  - Trigger: org.bukkit.event.player.PlayerJoinEvent
+    Async: true
+    Channel: global
+    IgnoreCancelled: true
+    Embed:
+      Enabled: true
+      Color: "#00f2fe"
+      Author:
+        ImageUrl: "{embedavatarurl}"
+        Name: "Hệ Thống Giám Sát Truy Cập Mạng (Network Auditor)"
+      Title:
+        Text: "📥 PHÁT HIỆN KẾT NỐI THÀNH CÔNG"
+      Description: "Một thực thể đã thực hiện cú bắt tay (handshake) và thiết lập kết nối vào thế giới sinh tồn thành công."
+      Fields:
+        - "Tài khoản (Username);`{usernamenoescapes}`;true"
+        - "Địa chỉ IP (Host);`${#player.address.address.hostAddress}`;true"
+        - "Độ trễ kết nối (Latency);`{ping}ms`;true"
+        - "Thế giới thực tại;`{world}`;true"
+        - "Hiệu năng hệ thống;`{tps} TPS`;true"
+        - "Mã định danh (UUID);`%player_uuid%`;false"
+      Timestamp: true
+
+  # 2. AUDIT LOG LỆNH HẮC ÁM / QUYỀN HẠN (SECURITY COMMAND AUDITOR)
+  # Giám sát 24/7 khi có ai đó cố tình sử dụng lệnh thay đổi chế độ chơi / sáng tạo.
+  - Trigger: /gamemode
+    Async: true
+    Channel: global
+    Embed:
+      Enabled: true
+      Color: "#ff0055"
+      Author:
+        ImageUrl: "{embedavatarurl}"
+        Name: "Cảnh Báo Phân Quyền Hệ Thống (Security Alert)"
+      Title:
+        Text: "⚠️ PHÁT HIỆN THỰC THI LỆNH ĐẶC QUYỀN"
+      Description: "Hệ thống phát hiện một người chơi vừa kích hoạt lệnh thay đổi cơ chế vật lý (Gamemode) của thế giới gốc."
+      Fields:
+        - "Người thực thi;`{usernamenoescapes}`;true"
+        - "Tọa độ thực thi;`%player_x%, %player_y%, %player_z%`;true"
+        - "Thế giới;`{world}`;true"
+        - "Chi tiết lệnh chạy;`/gamemode ${#allArgs}`;false"
+      Timestamp: true
+
+  # 3. GIÁM SÁT CẤP QUYỀN QUẢN TRỊ VIÊN (CRITICAL ADMIN OP AUDITOR)
+  # Bắn cảnh báo khẩn cấp ngay lập tức nếu có ai đó gõ lệnh /op cấp quyền tối cao trong game.
+  - Trigger: /op
+    Async: true
+    Channel: global
+    Embed:
+      Enabled: true
+      Color: "#aa00ff"
+      Author:
+        ImageUrl: "{embedavatarurl}"
+        Name: "Cảnh Báo Nguy Hiểm Cấp Độ 5 (Critical Emergency)"
+      Title:
+        Text: "🚨 PHÁT HIỆN HÀNH VI CẤP QUYỀN CHỦ SERVER (OP)"
+      Description: "Cảnh báo bảo mật tối cao! Một lệnh phân quyền Quản trị viên (/op) vừa được khởi tạo trực tiếp từ trong hệ thống."
+      Fields:
+        - "Đối tượng thực hiện;`{usernamenoescapes}`;true"
+        - "Tham số lệnh truyền vào;`/op ${#allArgs}`;true"
+      Timestamp: true
+
+  # 4. NHẬT KÝ TỬ VONG THẾ GIỚI KHẮC NGHIỆT (IMMERSIVE DEATH LOG)
+  # Ghi nhận lại vị trí chết oan khuất của anh em để Admin có thể kiểm tra cứu đồ khi cần.
+  - Trigger: org.bukkit.event.entity.PlayerDeathEvent
+    Async: true
+    Channel: global
+    IgnoreCancelled: true
+    Embed:
+      Enabled: true
+      Color: "#111111"
+      Author:
+        ImageUrl: "{embedavatarurl}"
+        Name: "Nhật Ký Tử Vong Thế Giới (Death Tracker)"
+      Title:
+        Text: "💀 TÍN HIỆU SINH TỒN BỊ DẬP TẮT"
+      Description: "Một người chơi vừa hy sinh tính mạng trong quá trình khám phá thế giới sinh tồn."
+      Fields:
+        - "Nạn nhân;`{usernamenoescapes}`;true"
+        - "Thế giới nằm xuống;`{world}`;true"
+        - "Tọa độ định vị tử vong;`%player_x%, %player_y%, %player_z%`;false"
+        - "Nguyên nhân tử vong;*{deathmessage}*;false"
+      Timestamp: true
+
+  # 5. MẪU KẾT NỐI CẢNH BÁO PHÁT HIỆN HACK / GIAN LẬN (ANTI-CHEAT AUDITOR)
+  # (Để sẵn ở trạng thái ẩn, nếu bạn cài các plugin AntiCheat như Matrix, GrimAC, chỉ cần bỏ dấu # ở đầu là chạy)
+  #- Trigger: me.rerere.matrix.api.events.PlayerViolationEvent
+  #  Channel: global
+  #  Conditions:
+  #    - violations >= 3
+  #  Embed:
+  #    Enabled: true
+  #    Color: "#ffaa00"
+  #    Author:
+  #      ImageUrl: "{embedavatarurl}"
+  #      Name: "Hệ Thống Phòng Chống Gian Lận (Anti-Cheat Core)"
+  #    Title:
+  #      Text: "⚡ PHÁT HIỆN DẤU HIỆU BẤT THƯỜNG (VIOLATION)"
+  #    Fields:
+  #      - "Đối tượng tình nghi;`{usernamenoescapes}`;true"
+  #      - "Loại gian lận;`${hackType.name()}`;true"
+  #      - "Mức độ vi phạm (VL);`{violations}`;true"
+  #      - "Độ trễ mạng;`{ping}ms`;true"
+  #    Timestamp: true
